@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="btn_anim_delay_ms">100</integer>
+    <integer name="btn_anim_duration_ms">100</integer>
+    <dimen name="btn_z">0dp</dimen>
+    <dimen name="btn_elevation">2dp</dimen>
+    <dimen name="btn_disabled_elevation">0dp</dimen>
+    <dimen name="btn_disabled_z">0dp</dimen>
+    <dimen name="btn_pressed_z">6dp</dimen>
+    <dimen name="btn_focused_z">2dp</dimen>
+    <dimen name="btn_hovered_z">2dp</dimen>
+</resources>

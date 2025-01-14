@@ -1,0 +1,38 @@
+[versions]
+agp = "8.8.0"
+android-x = "1.15.0"
+appcompat = "1.7.0"
+arrow = "1.2.0"
+calendar-view = "2.0.1"
+flexible-adapter = "5.1.1"
+hilt = "2.51.1"
+koin = "3.5.3"
+kotlin = "2.0.21"
+ktor = "2.3.7"
+material = "1.12.0"
+timber = "5.0.1"
+
+[libraries]
+android-calendar-view = { module = "com.github.prolificinteractive:material-calendarview", version.ref = "calendar-view" }
+android-flexible-adapter = { module = "com.github.ddB0515.FlexibleAdapter:flexible-adapter", version.ref = "flexible-adapter" }
+android-hilt = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
+android-hilt-kapt = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" }
+android-timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
+android-x-core = { module = "androidx.core:core-ktx", version.ref = "android-x" }
+appcompat = { module = "androidx.appcompat:appcompat", version.ref = "appcompat" }
+kotlin-arrow-core = { module = "io.arrow-kt:arrow-core", version.ref = "arrow" }
+kotlin-arrow-coroutines = { module = "io.arrow-kt:arrow-fx-coroutines", version.ref = "arrow" }
+kotlin-koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+ktor-serialization-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+material = { module = "com.google.android.material:material", version.ref = "material" }
+
+[plugins]
+androidApplication = { id = "com.android.application", version.ref = "agp" }
+androidLibrary = { id = "com.android.library", version.ref = "agp" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlinxSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

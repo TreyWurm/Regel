@@ -1,0 +1,46 @@
+package at.nukular.core.ui.theming
+
+const val DEFAULT_PRIMARY: Int = 0XFFF4751A.toInt()
+const val DEFAULT_ON_PRIMARY: Int = 0xFFFFFFFF.toInt()
+const val DEFAULT_PRIMARY_CONTAINER: Int = 0xFFFDD6FF.toInt()
+const val DEFAULT_ON_PRIMARY_CONTAINER: Int = 0xFF330044.toInt()
+
+const val DEFAULT_SECONDARY: Int = 0xFF6A596C.toInt()
+const val DEFAULT_ON_SECONDARY: Int = 0xFFFFFFFF.toInt()
+const val DEFAULT_SECONDARY_CONTAINER: Int = 0xFFF2DBF2.toInt()
+const val DEFAULT_ON_SECONDARY_CONTAINER: Int = 0xFF241727.toInt()
+
+const val DEFAULT_TERTIARY: Int = 0xFF82524D.toInt()
+const val DEFAULT_ON_TERTIARY: Int = 0xFFFFFFFF.toInt()
+const val DEFAULT_TERTIARY_CONTAINER: Int = 0xFFFFDAD5.toInt()
+const val DEFAULT_ON_TERTIARY_CONTAINER: Int = 0xFF33110F.toInt()
+
+const val DEFAULT_ERROR: Int = 0XFFCF1313.toInt()
+const val DEFAULT_ON_ERROR: Int = 0xFFFFDAD4.toInt()
+const val DEFAULT_ERROR_CONTAINER: Int = 0xFFFFFFFF.toInt()
+const val DEFAULT_ON_ERROR_CONTAINER: Int = 0xFF410001.toInt()
+
+const val DEFAULT_SUCCESS: Int = 0XFF0D9600.toInt()
+const val DEFAULT_ON_SUCCESS: Int = 0xFFFFFFFF.toInt()
+const val DEFAULT_SUCCESS_CONTAINER: Int = 0XFF9DFF94.toInt()
+const val DEFAULT_ON_SUCCESS_CONTAINER: Int = 0xFFFFFFFF.toInt()
+
+const val DEFAULT_BACKGROUND: Int = 0xFFEFEFF4.toInt()
+const val DEFAULT_ON_BACKGROUND: Int = 0xFF1E1A1E.toInt()
+
+const val DEFAULT_SURFACE: Int = 0xFFFFFFFF.toInt()
+const val DEFAULT_ON_SURFACE: Int = 0xFF1E1A1E.toInt()
+const val DEFAULT_SURFACE_VARIANT: Int = 0xFFECDFE9.toInt()
+const val DEFAULT_ON_SURFACE_VARIANT: Int = 0xFF4C444C.toInt()
+
+const val DEFAULT_DIVIDER: Int = 0x3F000000.toInt()
+
+const val DEFAULT_OUTLINE: Int = 0x3F000000.toInt()
+const val DEFAULT_OUTLINE_VARIANT: Int = 0x33000000.toInt()
+
+const val DEFAULT_GRADIENT_START: Int = 0xFFE01635.toInt()
+const val DEFAULT_GRADIENT_END: Int = 0xFFFFAA0C.toInt()
+
+const val DEFAULT_BUTTON_GRADIENT_START: Int = 0xFFF84310.toInt()
+const val DEFAULT_BUTTON_GRADIENT_END: Int = 0xFFFFAA0C.toInt()
+

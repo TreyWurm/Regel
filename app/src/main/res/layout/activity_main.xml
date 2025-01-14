@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<at.nukular.core.ui.views.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    >
+
+    <at.nukular.core.ui.views.TextView
+        android:id="@+id/tvNextTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_normal"
+        android:layout_marginTop="@dimen/spacing_double"
+        android:layout_marginEnd="@dimen/spacing_normal"
+        android:gravity="center"
+        android:text="@string/text_next_period"
+        android:textSize="@dimen/text_size_large"
+        app:layout_constraintTop_toTopOf="parent"
+        app:textViewStyle="Intense"
+        />
+
+    <at.nukular.core.ui.views.TextView
+        android:id="@+id/tvNext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_normal"
+        android:layout_marginTop="@dimen/spacing_quarter"
+        android:layout_marginEnd="@dimen/spacing_normal"
+        android:gravity="center"
+        android:textSize="@dimen/text_size_large"
+        app:layout_constraintTop_toBottomOf="@id/tvNextTitle"
+        app:textViewStyle="Intense"
+        tools:text="Next"
+        />
+
+    <at.nukular.core.ui.views.TextView
+        android:id="@+id/tvCalendar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_normal"
+        android:padding="@dimen/spacing_normal"
+        android:text="@string/calendar"
+        app:layout_constraintTop_toBottomOf="@id/tvNext"
+        />
+
+    <com.kizitonwose.calendar.view.CalendarView
+        android:id="@+id/cvCalendar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cv_dayViewResource="@layout/calendar_day_layout"
+        app:layout_constraintTop_toBottomOf="@id/tvCalendar"
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvItems"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/spacing_normal"
+        android:clipToPadding="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cvCalendar"
+        />
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btnAdd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/spacing_normal"
+        android:layout_marginBottom="@dimen/spacing_normal"
+        android:src="@drawable/ic_add"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+</at.nukular.core.ui.views.ConstraintLayout>

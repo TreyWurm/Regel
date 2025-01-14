@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <attr name="colorStyle" format="enum">
+        <enum name="OnPrimary" value="0x10" />
+        <enum name="OnSurface" value="0x20" />
+        <enum name="Primary" value="0x30" />
+        <enum name="Surface" value="0x40" />
+        <enum name="TextIntense" value="0x50" />
+        <enum name="TextLight" value="0x51" />
+        <enum name="Disabled" value="0x60" />
+        <enum name="Error" value="0x70" />
+        <enum name="Success" value="0x80" />
+    </attr>
+
+    <attr name="ripple" format="boolean" />
+
+
+    <declare-styleable name="FloatingIconView">
+        <attr name="ripple" />
+    </declare-styleable>
+
+    <declare-styleable name="IconView">
+        <attr name="ripple" />
+        <attr name="iconColor" format="reference|color" />
+        <attr name="colorStyle" />
+    </declare-styleable>
+
+    <declare-styleable name="PhotoView">
+        <attr name="ripple" />
+    </declare-styleable>
+
+    <declare-styleable name="Button">
+        <attr name="android:text" />
+        <attr name="textColor" format="color|reference" />
+        <attr name="android:icon" />
+        <attr name="android:enabled" />
+        <attr name="customButtonStyle" format="enum">
+            <enum name="Filled" value="0x10" />
+            <enum name="FilledElevated" value="0x11" />
+            <enum name="FilledGrey" value="0x12" />
+            <enum name="FilledBottom" value="0x13" />
+            <enum name="Outlined" value="0x20" />
+            <enum name="OutlinedElevated" value="0x21" />
+            <enum name="SurfaceElevated" value="0x30" />
+            <enum name="Text" value="0x40" />
+        </attr>
+    </declare-styleable>
+
+
+    <declare-styleable name="TextView">
+        <attr name="android:enabled" />
+        <attr name="ripple" />
+        <attr name="textViewStyle" format="enum">
+            <enum name="Intense" value="0x10" />
+            <enum name="Light" value="0x20" />
+            <enum name="Primary" value="0x30" />
+            <enum name="OnPrimary" value="0x40" />
+            <enum name="Error" value="0x50" />
+        </attr>
+    </declare-styleable>
+
+
+    <declare-styleable name="RoundedLayout">
+        <!-- Use for all corners same radius -->
+        <attr name="rl_radius" format="dimension" />
+        <!-- Use corners have different radii -->
+        <attr name="rl_radius_top_left" format="dimension" />
+        <attr name="rl_radius_top_right" format="dimension" />
+        <attr name="rl_radius_bottom_left" format="dimension" />
+        <attr name="rl_radius_bottom_right" format="dimension" />
+        <attr name="rl_stroke_width" format="dimension" />
+        <attr name="rl_stroke_color" format="color|reference" />
+        <attr name="rl_background_color" format="color|reference" />
+    </declare-styleable>
+
+    <declare-styleable name="RoundedConstraintLayout">
+        <!-- Use for all corners same radius -->
+        <attr name="rl_radius" />
+        <!-- Use corners have different radii -->
+        <attr name="rl_radius_top_left" />
+        <attr name="rl_radius_top_right" />
+        <attr name="rl_radius_bottom_left" />
+        <attr name="rl_radius_bottom_right" />
+        <attr name="rl_stroke_width" />
+        <attr name="rl_stroke_color" />
+        <attr name="rl_background_color" />
+    </declare-styleable>
+
+    <declare-styleable name="RoundedLinearLayout">
+        <!-- Use for all corners same radius -->
+        <attr name="rl_radius" />
+        <!-- Use corners have different radii -->
+        <attr name="rl_radius_top_left" />
+        <attr name="rl_radius_top_right" />
+        <attr name="rl_radius_bottom_left" />
+        <attr name="rl_radius_bottom_right" />
+        <attr name="rl_stroke_width" />
+        <attr name="rl_stroke_color" />
+        <attr name="rl_background_color" />
+    </declare-styleable>
+
+    <declare-styleable name="RoundedRecyclerView">
+        <!-- Use for all corners same radius -->
+        <attr name="rl_radius" />
+        <!-- Use corners have different radii -->
+        <attr name="rl_radius_top_left" />
+        <attr name="rl_radius_top_right" />
+        <attr name="rl_radius_bottom_left" />
+        <attr name="rl_radius_bottom_right" />
+        <attr name="rl_stroke_width" />
+        <attr name="rl_stroke_color" />
+        <attr name="rl_background_color" />
+    </declare-styleable>
+
+
+    <declare-styleable name="SearchView">
+        <attr name="sv_hint" format="string" />
+        <attr name="sv_removable" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="ConstraintLayout">
+        <attr name="ripple" />
+    </declare-styleable>
+
+    <declare-styleable name="LinearLayout">
+        <attr name="ripple" />
+    </declare-styleable>
+
+</resources>
