@@ -49,9 +49,6 @@ dependencies {
     implementation(libs.kotlin.arrow.core)
     implementation(libs.kotlin.arrow.coroutines)
 
-    // CalendarView
-    implementation(libs.android.calendar.view)
-    implementation("com.kizitonwose.calendar:view:2.5.0")
     // FlexibleAdapter
     implementation(libs.android.flexible.adapter)
 

@@ -1,4 +1,4 @@
-package at.nukular.core.ui.views
+package at.nukular.core.ui.views.calendar
 
 import android.content.Context
 import android.graphics.Canvas
@@ -15,9 +15,11 @@ import at.nukular.core.extensions.dpAsPx
 import at.nukular.core.extensions.dpAsPxFloat
 import at.nukular.core.extensions.drawTranslated
 import at.nukular.core.extensions.isSameMonth
+import at.nukular.core.extensions.measureDimension
 import at.nukular.core.extensions.spAsPxFloat
 import at.nukular.core.extensions.weekOfMonth
 import at.nukular.core.ui.theming.Theme
+import at.nukular.core.ui.views.UiComponent
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import java.time.DayOfWeek
@@ -26,6 +28,7 @@ import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import javax.inject.Inject
+import kotlin.math.max
 import kotlin.math.min
 
 
@@ -54,7 +57,6 @@ class MonthView @JvmOverloads constructor(
     }
     // endregion {
 
-    private val dayOfWeekFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("EEE")
     private val paintWeekDays = TextPaint().apply {
         flags = Paint.ANTI_ALIAS_FLAG
         textSize = 16.spAsPxFloat
@@ -77,6 +79,11 @@ class MonthView @JvmOverloads constructor(
         color = Theme.alpha(Color.BLUE, 0x50)
     }
 
+    private val paintPeriod = Paint().apply {
+        flags = Paint.ANTI_ALIAS_FLAG
+        color = Theme.alpha(Color.RED, 0x50)
+    }
+
     private val cellsPerRow = 7
     private var cellWidth = 0
     private var cellHeight = 0
@@ -92,6 +99,7 @@ class MonthView @JvmOverloads constructor(
         val textWidth = paintDays.measureText(text)
         StaticLayout(text, paintDays, textWidth.toInt())
     }
+    private val spacingSelectedDay = 8.dpAsPx
 
     private var firstDayOfWeekOfMonth: Int = 1
     var month: YearMonth? = YearMonth.now()
@@ -100,7 +108,32 @@ class MonthView @JvmOverloads constructor(
             updateOffsetsDay()
         }
 
-    private var selectedDays: List<LocalDate> = mutableListOf()
+    private var selectedDays: MutableSet<LocalDate> = mutableSetOf()
+
+    fun addSelectedDay(day: LocalDate) {
+        selectedDays.add(day)
+        invalidate()
+    }
+
+    fun addSelectedDays(days: Set<LocalDate>) {
+        selectedDays.addAll(days)
+        invalidate()
+    }
+
+    fun clearSelectedDays() {
+        selectedDays.clear()
+        invalidate()
+    }
+
+    fun removeSelectedDay(day: LocalDate) {
+        selectedDays.remove(day)
+        invalidate()
+    }
+
+    fun removeSelectedDays(days: List<LocalDate>) {
+        selectedDays.removeAll(days)
+        invalidate()
+    }
 
     fun updateOffsetsDay() {
         horizontalOffsetsDays = FloatArray(31) {
@@ -123,7 +156,18 @@ class MonthView @JvmOverloads constructor(
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        val specMode = MeasureSpec.getMode(widthMeasureSpec)
+        val specSize = MeasureSpec.getSize(widthMeasureSpec)
+
+        val desiredWidth: Int = max(staticLayoutsWeekDays.sumOf { it.width }, staticLayoutsDays.takeLast(7).sumOf { it.width })
+        val width = measureDimension(desiredWidth, widthMeasureSpec)
+
+        val textHeightWeekDay = staticLayoutsWeekDays.maxOf { it.height }
+        val textHeightDay = staticLayoutsDays.maxOf { it.height }
+        val desiredHeight = textHeightWeekDay + (textHeightDay + 2 * spacingSelectedDay) * 6 + 16.dpAsPx
+        val height = measureDimension(desiredHeight, heightMeasureSpec)
+
+        setMeasuredDimension(width, height)
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -162,6 +206,20 @@ class MonthView @JvmOverloads constructor(
                 radius,
                 paintToday
             )
+        }
+
+        selectedDays.forEach {
+            val today = it
+            if (today.isSameMonth(month)) {
+                val minSide = min(cellWidth, cellHeight)
+                val radius = (minSide - 8.dpAsPx) / 2f
+                canvas.drawCircle(
+                    (today.dayOfWeek.value - 1) % 7f * cellWidth + cellWidth / 2f,
+                    (today.weekOfMonth() - 1) * cellHeight + cellHeight / 2.toFloat(),
+                    radius,
+                    paintPeriod
+                )
+            }
         }
     }
 }

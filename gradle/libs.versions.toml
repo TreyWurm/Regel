@@ -3,7 +3,6 @@ agp = "8.8.0"
 android-x = "1.15.0"
 appcompat = "1.7.0"
 arrow = "1.2.0"
-calendar-view = "2.0.1"
 flexible-adapter = "5.1.1"
 hilt = "2.51.1"
 koin = "3.5.3"
@@ -13,7 +12,6 @@ material = "1.12.0"
 timber = "5.0.1"
 
 [libraries]
-android-calendar-view = { module = "com.github.prolificinteractive:material-calendarview", version.ref = "calendar-view" }
 android-flexible-adapter = { module = "com.github.ddB0515.FlexibleAdapter:flexible-adapter", version.ref = "flexible-adapter" }
 android-hilt = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 android-hilt-kapt = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" }

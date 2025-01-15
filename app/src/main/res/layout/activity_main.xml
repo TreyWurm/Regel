@@ -37,21 +37,34 @@
         />
 
     <at.nukular.core.ui.views.TextView
-        android:id="@+id/tvCalendar"
+        android:id="@+id/tvCurrentMonth"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/spacing_normal"
-        android:padding="@dimen/spacing_normal"
-        android:text="@string/calendar"
+        android:fontFamily="sans-serif-medium"
+        android:padding="@dimen/spacing_half"
+        android:textSize="@dimen/text_size_large"
         app:layout_constraintTop_toBottomOf="@id/tvNext"
+        app:textViewStyle="Intense"
         />
 
-    <at.nukular.core.ui.views.MonthView
+    <at.nukular.core.ui.views.floating.FloatingIconView
+        android:id="@+id/btnToday"
+        android:layout_width="@dimen/icon_size_with_padding"
+        android:layout_height="@dimen/icon_size_with_padding"
+        android:layout_marginEnd="@dimen/spacing_normal"
+        android:padding="10dp"
+        app:layout_constraintBottom_toTopOf="@id/cvCalendar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:ripple="true"
+        app:srcCompat="@android:drawable/ic_menu_today"
+        />
+
+    <at.nukular.core.ui.views.calendar.CalendarView
         android:id="@+id/cvCalendar"
         android:layout_width="match_parent"
-        android:layout_height="500dp"
-        app:cv_dayViewResource="@layout/calendar_day_layout"
-        app:layout_constraintTop_toBottomOf="@id/tvCalendar"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/tvCurrentMonth"
         />
 
     <androidx.recyclerview.widget.RecyclerView

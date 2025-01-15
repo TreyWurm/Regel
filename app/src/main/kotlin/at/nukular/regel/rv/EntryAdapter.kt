@@ -2,6 +2,7 @@ package at.nukular.regel.rv
 
 import at.nukular.regel.model.VHUEntry
 import eu.davidea.flexibleadapter.FlexibleAdapter
+import java.time.LocalDate
 
 class EntryAdapter(
     items: List<ItemEntry> = emptyList(),
@@ -9,8 +10,8 @@ class EntryAdapter(
     stableIds: Boolean = false,
 ) : FlexibleAdapter<ItemEntry>(items, listeners, stableIds) {
 
-    fun setEntries(vhus: List<VHUEntry>) {
-        updateDataSet(createItems(vhus))
+    fun setEntries(vhus: List<LocalDate>) {
+        updateDataSet(createItems(vhus.map { VHUEntry(it) }))
     }
 
     fun addEntries(vhus: List<VHUEntry>) {
