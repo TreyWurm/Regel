@@ -1,8 +1,10 @@
 package at.nukular.core.extensions
 
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.YearMonth
 import java.time.ZonedDateTime
 
 
@@ -259,6 +261,15 @@ fun ZonedDateTime?.isSameYear(toCompare: ZonedDateTime?): Boolean {
 // region LocalDate
 
 
+fun LocalDate.weekOfMonth(): Int {
+    var weekOfMonth = 1
+    val yearMonth = YearMonth.from(this)
+    for (i in 2..dayOfMonth) { // Skip first Monday as weekOfMonth already 1
+        if (yearMonth.atDay(i).dayOfWeek == DayOfWeek.MONDAY) weekOfMonth++
+    }
+    return weekOfMonth
+}
+
 /**
  * Check if 2 dates are the same day (same year)
  *
@@ -280,6 +291,14 @@ fun LocalDate?.isSameDay(toCompare: LocalDate?): Boolean {
  * @return True if both dates are the same month; False otherwise
  */
 fun LocalDate?.isSameMonth(toCompare: LocalDate?): Boolean {
+    return if (this == null || toCompare == null) {
+        false
+    } else {
+        month == toCompare.month && year == toCompare.year
+    }
+}
+
+fun LocalDate?.isSameMonth(toCompare: YearMonth?): Boolean {
     return if (this == null || toCompare == null) {
         false
     } else {

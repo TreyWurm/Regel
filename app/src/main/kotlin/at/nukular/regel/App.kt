@@ -1,8 +1,10 @@
 package at.nukular.regel
 
 import android.app.Application
+import android.content.res.Configuration
 import at.nukular.core.AppLifecycleTracker
 import at.nukular.core.di.koin.appModule
+import at.nukular.core.extensions.AppConfig
 import at.nukular.regel.di.mapperModule
 import dagger.hilt.android.HiltAndroidApp
 import org.koin.android.ext.koin.androidContext
@@ -24,6 +26,7 @@ class App : Application(),
 
         registerActivityLifecycleCallbacks(AppLifecycleTracker(this))
 
+        AppConfig.onConfigChanged(this, null)
         initKoin()
         initTimber()
     }
@@ -40,6 +43,11 @@ class App : Application(),
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        AppConfig.onConfigChanged(this, newConfig)
     }
 
     // ========================================================================================================================

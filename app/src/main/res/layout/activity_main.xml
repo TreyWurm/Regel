@@ -46,10 +46,10 @@
         app:layout_constraintTop_toBottomOf="@id/tvNext"
         />
 
-    <com.kizitonwose.calendar.view.CalendarView
+    <at.nukular.core.ui.views.MonthView
         android:id="@+id/cvCalendar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="500dp"
         app:cv_dayViewResource="@layout/calendar_day_layout"
         app:layout_constraintTop_toBottomOf="@id/tvCalendar"
         />

@@ -2,17 +2,17 @@ package at.nukular.core.extensions
 
 import android.content.Context
 import android.content.res.Configuration
+import android.util.DisplayMetrics
+import android.util.TypedValue
 import kotlin.math.floor
 
 object AppConfig {
     var density = 1f
-    var fontDensity = 1f
+    var displayMetrics = DisplayMetrics()
 
     fun onConfigChanged(context: Context, newConfiguration: Configuration?) {
-        val configuration = newConfiguration ?: context.resources.configuration
-
         density = context.resources.displayMetrics.density
-        fontDensity = context.resources.displayMetrics.scaledDensity
+        displayMetrics = context.resources.displayMetrics
     }
 }
 
@@ -30,8 +30,6 @@ val Float.dpAsPxFloat: Float get() = if (this == 0f) 0f else floor(AppConfig.den
 
 val Float.pxAsDpFloat: Float get() = if (this == 0f) 0f else floor(this.toDouble() / AppConfig.density).toFloat()
 
-val Int.spAsPx: Int get() = if (this == 0) 0 else floor(AppConfig.fontDensity * this.toDouble()).toInt()
+val Int.spAsPx: Int get() = if (this == 0) 0 else floor(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, toFloat(), AppConfig.displayMetrics)).toInt()
 
-val Float.spAsPx: Float get() = if (this == 0f) 0f else floor(AppConfig.fontDensity * this.toDouble()).toFloat()
-
-val Float.spAsPxInt: Int get() = this.spAsPx.toInt()
+val Int.spAsPxFloat: Float get() = if (this == 0) 0f else floor(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, toFloat(), AppConfig.displayMetrics))

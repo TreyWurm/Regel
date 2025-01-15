@@ -60,21 +60,7 @@ class MainActivity : ThemedActivity(),
     }
 
     override fun initViews(bundle: Bundle?) {
-        val currentMonth = YearMonth.now()
-        val startMonth = currentMonth.minusMonths(100)  // Adjust as needed
-        val endMonth = currentMonth.plusMonths(100)  // Adjust as needed
-        val firstDayOfWeek = firstDayOfWeekFromLocale() // Available from the library
-        binding.cvCalendar.apply {
-            dayBinder = object : MonthDayBinder<DayViewContainer> {
-                override fun bind(container: DayViewContainer, data: com.kizitonwose.calendar.core.CalendarDay) {
-                    container.textView.text = data.date.dayOfMonth.toString()
-                }
 
-                override fun create(view: View) = DayViewContainer(view)
-            }
-            setup(startMonth, endMonth, firstDayOfWeek)
-            scrollToMonth(currentMonth)
-        }
     }
 
     override fun initRVs(bundle: Bundle?) {
