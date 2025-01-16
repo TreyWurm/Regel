@@ -4,10 +4,14 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.RectF
 import android.graphics.Typeface
 import android.text.TextPaint
 import android.util.AttributeSet
+import android.view.GestureDetector
+import android.view.MotionEvent
 import android.view.View
+import androidx.core.graphics.withTranslation
 import at.nukular.core.extensions.AppConfig
 import at.nukular.core.extensions.CURRENT_LOCALE
 import at.nukular.core.extensions.StaticLayout
@@ -25,7 +29,6 @@ import timber.log.Timber
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
-import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import javax.inject.Inject
 import kotlin.math.max
@@ -102,21 +105,38 @@ class MonthView @JvmOverloads constructor(
     private val spacingSelectedDay = 8.dpAsPx
 
     private var firstDayOfWeekOfMonth: Int = 1
+
+    private data class Item(
+        val date: LocalDate,
+        val selected: Boolean = false,
+        val rect: RectF = RectF(),
+        val horizontalOffset: Float = 0f,
+        val verticalOffset: Float = 0f,
+    )
+
+    private val matrix: Array<Array<Item?>> = Array(6) { Array(7) { null } }
     var month: YearMonth? = YearMonth.now()
         set(value) {
             field = value
             updateOffsetsDay()
+            updateMatrix()
         }
 
     private var selectedDays: MutableSet<LocalDate> = mutableSetOf()
 
     fun addSelectedDay(day: LocalDate) {
         selectedDays.add(day)
+        matrix.forEach { row, col, item ->
+            matrix[row][col] = item?.copy(selected = selectedDays.contains(item.date))
+        }
         invalidate()
     }
 
     fun addSelectedDays(days: Set<LocalDate>) {
         selectedDays.addAll(days)
+        matrix.forEach { row, col, item ->
+            matrix[row][col] = item?.copy(selected = selectedDays.contains(item.date))
+        }
         invalidate()
     }
 
@@ -127,6 +147,9 @@ class MonthView @JvmOverloads constructor(
 
     fun removeSelectedDay(day: LocalDate) {
         selectedDays.remove(day)
+        matrix.forEach { row, col, item ->
+            matrix[row][col] = item?.copy(selected = selectedDays.contains(item.date))
+        }
         invalidate()
     }
 
@@ -135,11 +158,82 @@ class MonthView @JvmOverloads constructor(
         invalidate()
     }
 
+
+    fun <T> Array<Array<T>>.forEach(action: (row: Int, col: Int, T) -> Unit) {
+        for (i in indices) {
+            for (j in this[i].indices) {
+                action(i, j, this[i][j])
+            }
+        }
+    }
+
     fun updateOffsetsDay() {
+        matrix.forEach { row, col, item ->
+            val item = item ?: return@forEach
+            val top = row * cellHeight
+            val left = col * cellWidth
+            val right = left + cellWidth
+            val bottom = top + cellHeight
+            matrix[row][col] = item.copy(
+                horizontalOffset = ((cellWidth - staticLayoutsDays[item.date.dayOfMonth - 1].width) / 2f),
+                verticalOffset = ((cellHeight - staticLayoutsDays[item.date.dayOfMonth - 1].height) / 2f),
+                rect = RectF(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat()),
+            )
+        }
+
         horizontalOffsetsDays = FloatArray(31) {
             firstDayOfWeekOfMonth = month?.atDay(1)?.dayOfWeek?.value ?: 1
             (it - 1 + firstDayOfWeekOfMonth) % 7 * cellWidth.toFloat() + ((cellWidth - staticLayoutsDays[it].width) / 2f)
         }
+    }
+
+    private fun updateMatrix() {
+        val month = month ?: return
+        for (row in 0..5) {
+            for (col in 0..6) {
+                val day = (row * 7) + col - firstDayOfWeekOfMonth + 2 // +1 col, +1 firstDayOfWeekOfMonth
+                if (month.isValidDay(day)) {
+                    matrix[row][col] = Item(month.atDay(day))
+                }
+            }
+        }
+    }
+
+    val gestureDetector = GestureDetector(context, object : GestureDetector.SimpleOnGestureListener() {
+        override fun onLongPress(e: MotionEvent) {
+
+        }
+
+        override fun onDown(e: MotionEvent): Boolean {
+            findDateForTap(e.x, e.y)?.let {
+                when (it.selected) {
+                    true -> removeSelectedDay(it.date)
+                    false -> addSelectedDay(it.date)
+                }
+            }
+            return super.onDown(e)
+        }
+
+        override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
+            findDateForTap(e.x, e.y)
+            return super.onSingleTapConfirmed(e)
+        }
+
+        override fun onSingleTapUp(e: MotionEvent): Boolean {
+            findDateForTap(e.x, e.y)
+            return true
+        }
+    })
+
+    private fun findDateForTap(x: Float, y: Float): Item? {
+        if (y <= staticLayoutsWeekDays[0].height + 16.dpAsPxFloat) return null
+        val col = (x / cellWidth).toInt()
+        val row = ((y - staticLayoutsWeekDays[0].height - 16.dpAsPxFloat) / cellHeight).toInt()
+        return matrix[row][col]
+    }
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        return gestureDetector.onTouchEvent(event)
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -182,13 +276,16 @@ class MonthView @JvmOverloads constructor(
 
         canvas.translate(0f, staticLayoutsWeekDays[0].height + 16.dpAsPxFloat)
         val month = month ?: return
-        staticLayoutsDays.take(month.lengthOfMonth()).forEachIndexed { index, it ->
-            it.drawTranslated(
-                canvas,
-                translationX = horizontalOffsetsDays[index],
-                translationY = (index - 1 + firstDayOfWeekOfMonth) / 7 * cellHeight +
-                        (cellHeight.toFloat() - staticLayoutsDays[0].height) / 2
-            )
+        matrix.forEach { row, col, item ->
+            val item = item ?: return@forEach
+            canvas.withTranslation(item.rect.left, item.rect.top) {
+                staticLayoutsDays[item.date.dayOfMonth - 1].drawTranslated(canvas, translationX = item.horizontalOffset, translationY = item.verticalOffset)
+                if (item.selected) {
+                    val minSide = min(cellWidth, cellHeight)
+                    val radius = (minSide - 8.dpAsPx) / 2f
+                    canvas.drawCircle(cellWidth / 2f, cellHeight / 2f, radius, paintPeriod)
+                }
+            }
         }
 
         for (i in 0..5) {
@@ -206,20 +303,6 @@ class MonthView @JvmOverloads constructor(
                 radius,
                 paintToday
             )
-        }
-
-        selectedDays.forEach {
-            val today = it
-            if (today.isSameMonth(month)) {
-                val minSide = min(cellWidth, cellHeight)
-                val radius = (minSide - 8.dpAsPx) / 2f
-                canvas.drawCircle(
-                    (today.dayOfWeek.value - 1) % 7f * cellWidth + cellWidth / 2f,
-                    (today.weekOfMonth() - 1) * cellHeight + cellHeight / 2.toFloat(),
-                    radius,
-                    paintPeriod
-                )
-            }
         }
     }
 }
