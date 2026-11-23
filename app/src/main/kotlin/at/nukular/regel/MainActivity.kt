@@ -16,7 +16,6 @@ import at.nukular.core.ui.ThemedActivity
 import at.nukular.core.ui.onRestoreOnly
 import at.nukular.core.ui.viewmodel.log
 import at.nukular.regel.databinding.ActivityMainBinding
-import at.nukular.regel.model.VHUEntry
 import at.nukular.regel.rv.EntryAdapter
 import at.nukular.regel.viewmodel.MainUiEvent
 import at.nukular.regel.viewmodel.MainUiState
@@ -120,13 +119,14 @@ class MainActivity : ThemedActivity(),
 
     private fun initialDataLoadedEventImpl(uiEvent: MainUiEvent.InitialDataLoaded) {
         adapter.setEntries(uiEvent.pastDates.toList())
-        binding.cvCalendar.addSelectedDays(uiEvent.pastDates + uiEvent.estimations)
+        binding.cvCalendar.setDays(selected = uiEvent.pastDates, estimated = uiEvent.estimations)
         binding.tvNext.text = Constants.dayOfMonthMonthAbbrYear.format(uiEvent.estimations.first())
     }
 
     private fun newEntryEventImpl(uiEvent: MainUiEvent.NewEntry) {
-        adapter.addEntries(listOf(VHUEntry(uiEvent.date)))
-//        binding.tvNext.text = Constants.dayOfMonthMonthAbbrYear.format(.first())
+        adapter.setEntries(uiEvent.pastDates.toList())
+        binding.cvCalendar.setDays(selected = uiEvent.pastDates, estimated = uiEvent.estimations)
+        binding.tvNext.text = Constants.dayOfMonthMonthAbbrYear.format(uiEvent.estimations.first())
     }
     // endregion
 

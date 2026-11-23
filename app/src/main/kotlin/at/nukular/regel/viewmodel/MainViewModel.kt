@@ -51,7 +51,7 @@ class MainViewModel @Inject constructor(
         when (uiEvent) {
             is MainUiEvent.EntryExists -> {}
             is MainUiEvent.InitialDataLoaded -> stateObject.updateVmState { it.copy(estimations = uiEvent.estimations, pastDates = uiEvent.pastDates) }
-            is MainUiEvent.NewEntry -> stateObject.updateVmState { it.copy(pastDates = (it.pastDates + uiEvent.date).sortedDescending().toSet()) }
+            is MainUiEvent.NewEntry -> stateObject.updateVmState { it.copy(estimations = uiEvent.estimations, pastDates = uiEvent.pastDates) }
         }
 
         _uiEvents.send(uiEvent)
@@ -69,7 +69,8 @@ class MainViewModel @Inject constructor(
             true -> sendUiEvent(MainUiEvent.EntryExists)
             false -> {
                 fileWriterReader.addEntry(userAction.date)
-                sendUiEvent(MainUiEvent.NewEntry(userAction.date))
+                val pastDates = (stateObject.pastDates + userAction.date).sortedDescending().toSet()
+                sendUiEvent(MainUiEvent.NewEntry(userAction.date, pastDates = pastDates, estimations = estimatedNextPeriods(pastDates)))
             }
         }
     }

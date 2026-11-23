@@ -87,11 +87,15 @@ class MonthView @JvmOverloads constructor(
         color = Theme.alpha(Color.RED, 0x50)
     }
 
+    private val paintEstimation = Paint().apply {
+        flags = Paint.ANTI_ALIAS_FLAG
+        color = Theme.alpha(0xFFFF9800.toInt(), 0x50) // Orange
+    }
+
     private val cellsPerRow = 7
     private var cellWidth = 0
     private var cellHeight = 0
     private var horizontalOffsetsWeekDays = FloatArray(cellsPerRow)
-    private var horizontalOffsetsDays = FloatArray(31)
     private var staticLayoutsWeekDays = Array(cellsPerRow) {
         val text = DayOfWeek.of(it + 1).getDisplayName(TextStyle.SHORT_STANDALONE, CURRENT_LOCALE)
         val textWidth = paintWeekDays.measureText(text)
@@ -109,20 +113,39 @@ class MonthView @JvmOverloads constructor(
     private data class Item(
         val date: LocalDate,
         val selected: Boolean = false,
+        val estimated: Boolean = false,
         val rect: RectF = RectF(),
         val horizontalOffset: Float = 0f,
         val verticalOffset: Float = 0f,
     )
 
     private val matrix: Array<Array<Item?>> = Array(6) { Array(7) { null } }
-    var month: YearMonth? = YearMonth.now()
+    private var selectedDays: MutableSet<LocalDate> = mutableSetOf()
+    private var estimatedDays: Set<LocalDate> = emptySet()
+
+    var month: YearMonth? = null
         set(value) {
             field = value
-            updateOffsetsDay()
             updateMatrix()
+            updateOffsetsDay()
+            invalidate()
         }
 
-    private var selectedDays: MutableSet<LocalDate> = mutableSetOf()
+    init {
+        month = YearMonth.now()
+    }
+
+    /**
+     * Predicted days, drawn in a different color than [selectedDays].
+     * If a day is both selected and estimated, the selection wins.
+     */
+    fun setEstimatedDays(days: Set<LocalDate>) {
+        estimatedDays = days
+        matrix.forEach { row, col, item ->
+            matrix[row][col] = item?.copy(estimated = estimatedDays.contains(item.date))
+        }
+        invalidate()
+    }
 
     fun addSelectedDay(day: LocalDate) {
         selectedDays.add(day)
@@ -142,6 +165,9 @@ class MonthView @JvmOverloads constructor(
 
     fun clearSelectedDays() {
         selectedDays.clear()
+        matrix.forEach { row, col, item ->
+            matrix[row][col] = item?.copy(selected = false)
+        }
         invalidate()
     }
 
@@ -155,6 +181,9 @@ class MonthView @JvmOverloads constructor(
 
     fun removeSelectedDays(days: List<LocalDate>) {
         selectedDays.removeAll(days)
+        matrix.forEach { row, col, item ->
+            matrix[row][col] = item?.copy(selected = selectedDays.contains(item.date))
+        }
         invalidate()
     }
 
@@ -180,20 +209,19 @@ class MonthView @JvmOverloads constructor(
                 rect = RectF(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat()),
             )
         }
-
-        horizontalOffsetsDays = FloatArray(31) {
-            firstDayOfWeekOfMonth = month?.atDay(1)?.dayOfWeek?.value ?: 1
-            (it - 1 + firstDayOfWeekOfMonth) % 7 * cellWidth.toFloat() + ((cellWidth - staticLayoutsDays[it].width) / 2f)
-        }
     }
 
     private fun updateMatrix() {
-        val month = month ?: return
+        val month = month
+        firstDayOfWeekOfMonth = month?.atDay(1)?.dayOfWeek?.value ?: 1
         for (row in 0..5) {
             for (col in 0..6) {
                 val day = (row * 7) + col - firstDayOfWeekOfMonth + 2 // +1 col, +1 firstDayOfWeekOfMonth
-                if (month.isValidDay(day)) {
-                    matrix[row][col] = Item(month.atDay(day))
+                matrix[row][col] = if (month != null && month.isValidDay(day)) {
+                    val date = month.atDay(day)
+                    Item(date, selected = selectedDays.contains(date), estimated = estimatedDays.contains(date))
+                } else {
+                    null // Clear cells left over from a previously bound month
                 }
             }
         }
@@ -232,7 +260,13 @@ class MonthView @JvmOverloads constructor(
         return matrix[row][col]
     }
 
+    /**
+     * Whether tapping a date toggles its selection. Disabled by default.
+     */
+    var isDateSelectionEnabled: Boolean = false
+
     override fun onTouchEvent(event: MotionEvent): Boolean {
+        if (!isDateSelectionEnabled) return super.onTouchEvent(event)
         return gestureDetector.onTouchEvent(event)
     }
 
@@ -280,10 +314,15 @@ class MonthView @JvmOverloads constructor(
             val item = item ?: return@forEach
             canvas.withTranslation(item.rect.left, item.rect.top) {
                 staticLayoutsDays[item.date.dayOfMonth - 1].drawTranslated(canvas, translationX = item.horizontalOffset, translationY = item.verticalOffset)
-                if (item.selected) {
+                val paint = when {
+                    item.selected -> paintPeriod
+                    item.estimated -> paintEstimation
+                    else -> null
+                }
+                if (paint != null) {
                     val minSide = min(cellWidth, cellHeight)
                     val radius = (minSide - 8.dpAsPx) / 2f
-                    canvas.drawCircle(cellWidth / 2f, cellHeight / 2f, radius, paintPeriod)
+                    canvas.drawCircle(cellWidth / 2f, cellHeight / 2f, radius, paint)
                 }
             }
         }

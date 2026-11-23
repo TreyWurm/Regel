@@ -6,4 +6,5 @@ import java.time.YearMonth
 data class VHUMonth(
     val month: YearMonth,
     val selectedDays: Set<LocalDate>,
+    val estimatedDays: Set<LocalDate> = emptySet(),
 )

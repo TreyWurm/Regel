@@ -45,7 +45,7 @@ class ItemMonth(
 
     override fun shouldNotifyChange(newItem: IFlexible<*>): Boolean {
         if (newItem is ItemMonth) {
-            return vhu.selectedDays != newItem.vhu.selectedDays
+            return vhu.selectedDays != newItem.vhu.selectedDays || vhu.estimatedDays != newItem.vhu.estimatedDays
         }
         return super.shouldNotifyChange(newItem)
     }
@@ -80,8 +80,11 @@ class ItemMonth(
 
             if (payloads.isEmpty()) {
                 binding.root.with {
-                    it.month = vhu.month
+                    // Reset selection first, the view may be recycled from another month
+                    it.clearSelectedDays()
                     it.addSelectedDays(vhu.selectedDays)
+                    it.setEstimatedDays(vhu.estimatedDays)
+                    it.month = vhu.month
                 }
 
             } else {

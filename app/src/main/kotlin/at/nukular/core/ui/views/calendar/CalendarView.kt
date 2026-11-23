@@ -47,6 +47,7 @@ class CalendarView @JvmOverloads constructor(
 
     var scrollListener: CalendarListener? = null
     private var selectedDays: MutableSet<LocalDate> = mutableSetOf()
+    private var estimatedDays: Set<LocalDate> = emptySet()
     private val layoutManagera: LinearLayoutManager = LinearLayoutManager(context, HORIZONTAL, false)
     private val adaptera = FlexibleAdapter<ItemMonth>(
         listOf(
@@ -80,16 +81,43 @@ class CalendarView @JvmOverloads constructor(
         if (position <= 2) {
             val item = adaptera.getItem(0) ?: return
             val newMonth = item.vhu.month.minusMonths(1)
-            post { adaptera.addItem(0, ItemMonth(VHUMonth(newMonth, selectedDays.filter { it.isSameMonth(newMonth) }.toSet()))) }
+            post { adaptera.addItem(0, createMonthItem(newMonth)) }
         }
 
         if (position >= adaptera.itemCount - 2) {
             val item = adaptera.getItem(adaptera.itemCount - 1) ?: return
             val newMonth = item.vhu.month.plusMonths(1)
-            post { adaptera.addItem(ItemMonth(VHUMonth(newMonth, selectedDays.filter { it.isSameMonth(newMonth) }.toSet()))) }
+            post { adaptera.addItem(createMonthItem(newMonth)) }
         }
     }
 
+
+    /**
+     * Replaces all selected and estimated days and rebinds every month whose days changed
+     */
+    fun setDays(selected: Set<LocalDate>, estimated: Set<LocalDate>) {
+        selectedDays = selected.toMutableSet()
+        estimatedDays = estimated
+
+        val groupedSelected = selected.groupBy { YearMonth.from(it) }
+        val groupedEstimated = estimated.groupBy { YearMonth.from(it) }
+        adaptera.currentItems.toList().forEach {
+            val newVhu = it.vhu.copy(
+                selectedDays = groupedSelected[it.vhu.month]?.toSet() ?: emptySet(),
+                estimatedDays = groupedEstimated[it.vhu.month]?.toSet() ?: emptySet(),
+            )
+            if (newVhu == it.vhu) return@forEach
+            adaptera.updateItem(ItemMonth(newVhu))
+        }
+    }
+
+    private fun createMonthItem(month: YearMonth): ItemMonth = ItemMonth(
+        VHUMonth(
+            month = month,
+            selectedDays = selectedDays.filter { it.isSameMonth(month) }.toSet(),
+            estimatedDays = estimatedDays.filter { it.isSameMonth(month) }.toSet(),
+        )
+    )
 
     fun addSelectedDay(day: LocalDate) {
         selectedDays.add(day)
@@ -105,9 +133,9 @@ class CalendarView @JvmOverloads constructor(
     fun addSelectedDays(days: Set<LocalDate>) {
         selectedDays.addAll(days)
 
-        val groupedDays = days.groupBy { it.month }
+        val groupedDays = days.groupBy { YearMonth.from(it) }
         adaptera.currentItems.forEach {
-            val daysForMonth = groupedDays[it.vhu.month.month] ?: return@forEach
+            val daysForMonth = groupedDays[it.vhu.month] ?: return@forEach
             val newItem = ItemMonth(it.vhu.copy(selectedDays = it.vhu.selectedDays + daysForMonth))
             adaptera.updateItem(newItem)
         }
@@ -138,7 +166,8 @@ class CalendarView @JvmOverloads constructor(
     }
 
     fun scrollToToday() {
-        val today = adaptera.currentItems.indexOfFirst { it.vhu.month.month == LocalDate.now().month }
+        val today = adaptera.currentItems.indexOfFirst { it.vhu.month == YearMonth.now() }
+        if (today == -1) return
         layoutManager?.scrollToPosition(today)
     }
 }
